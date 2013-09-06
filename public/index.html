@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="es">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="utf-8">
+    <title>Ejemplo Socket.io</title>
+    <style type="text/css">
+        form#send-message { display: none; margin-bottom: 30px; }
+        section#nicknames { float: right; width: 690px; }
+        #nicknames h2 { display: none; }
+        textarea#message { width: 300px; height: 100px; }
+        section#messages p strong { margin-right: 5px; }
+        #messages{ height:300px;}
+    </style>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.0-rc2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-theme.min.css">
+  </head>
+  <body>
+    <div class="container">
+
+      <h1>Chat</h1>
+
+      <form id="set-nickname">
+        <label for="nickname">Nickname:</label>
+        <input type="text" name="nickname" id="nickname" />
+        <input type="submit" />
+      </form>
+
+      <section id="nicknames">
+       <h2>conectados</h2> 
+      </section>
+
+      <form class="form-horizontal" role="form" id="send-message">
+
+       
+        
+        <div class="form-group">
+         <div class="col-lg-4">
+            <input type="text" class="form-control" id="message">
+          </div>
+        </div>
+        
+        
+        
+        <div class="form-group">
+          <div class="col-lg-2">
+            <button type="submit" class="btn btn-default">enviar</button>
+          </div>
+        </div>
+        
+      </form>
+
+      <section id="messages"></section>
+
+    </div>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.0-rc2/js/bootstrap.min.js"></script>
+    <script src="http://localhost:8000/socket.io/socket.io.js"></script>
+    <script>
+      var socket = io.connect('http://localhost:8000');
+      socket.on('nicknames', function (data) {
+        $('#nicknames').empty().append($('<ul>'));
+        for(var i=0; i<data.length; i++) {
+          $('#nicknames ul').append('<li>' + data[i] + '</li>');
+        }
+      });
+      socket.on('user message', function (data) {
+        $('#messages').append($('<p>').append($('<strong>').text(data.nick), data.message));
+      });
+      socket.on('announcement', function (data) {
+        $('#messages').append($('<p>').append($('<em>').text(data.message)));
+      });
+      $(function () {
+        $('#set-nickname').submit(function() {
+          socket.emit('nickname', $('#nickname').val(), function (data) {
+            if (!data) {
+              $('#set-nickname').hide();
+              $('#send-message').show();
+            } else {
+              $('#set-nickname')
+              .prepend($('<p>')
+              .text('Nickname ya tomado, elige otro.'));
+            }
+          });
+          return false;
+        });
+        $('#send-message').submit(function () {
+          socket.emit('user message', $('#message').val());
+          $('#message').val('').focus();
+          return false;
+        });
+      });
+    </script>
+  </body>
+</html>
