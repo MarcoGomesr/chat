@@ -57,7 +57,7 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.0-rc2/js/bootstrap.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.16/socket.io.min.js"></script>
     <script>
-      var socket = io.connect('http://localhost:8000');
+      var socket = io.connect();
       socket.on('nicknames', function (data) {
         $('#nicknames').empty().append($('<ul>'));
         for(var i=0; i<data.length; i++) {
