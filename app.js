@@ -2,6 +2,8 @@
  * Module dependencies.
  */
 
+// heroku port
+
 
 var express = require('express')
   , routes = require('./routes')
@@ -17,7 +19,7 @@ var express = require('express')
 
 
 
-server.listen(80);
+
 
 io.sockets.on('connection', function (socket) {
   socket.on('nickname', function (data, fn) {
@@ -65,6 +67,10 @@ if ('development' == app.get('env')) {
 // });
 app.get('/users', user.list);
 
-http.createServer(app).listen(app.get('port'), function(){
-  console.log('Express server listening on port ' + app.get('port'));
+// http.createServer(app).listen(app.get('port'), function(){
+//   console.log('Express server listening on port ' + app.get('port'));
+// });
+
+server.listen(app.get('port'), function(){
+   console.log("Express server listening on port " + app.get('port'));
 });
