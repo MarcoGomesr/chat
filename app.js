@@ -17,7 +17,7 @@ var express = require('express')
 
 
 
-server.listen(app.get('port'));
+server.listen(80);
 
 io.sockets.on('connection', function (socket) {
   socket.on('nickname', function (data, fn) {
