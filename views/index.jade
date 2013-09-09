@@ -1,0 +1,25 @@
+extends layout
+
+block content
+	.container
+		h1 Chat
+		form#set-nickname
+			label Nickname
+				input(type='text', id='nickname', name="nickname")
+				input(type="submit"  value="Enviar")
+    
+		section#nicknames
+			h2 Conectados
+
+		form.form-horizontal#send-message(role="form")
+			div.form-group
+				div.col-lg-4.col-md-4
+					input(type="text" class="form-control" id="message")
+
+			div.form-group
+				div.col-lg-2.col-md-2
+					button(type="submit" class="form-control btn btn-info" id="message") enviar
+
+		section#messages
+ 
+	

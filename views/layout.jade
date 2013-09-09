@@ -1,0 +1,66 @@
+doctype 5
+html(lang="es")
+  head
+    title Node.js Chat Server
+    link(rel='stylesheet', href='/stylesheets/style.css')
+    link(rel="stylesheet", href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.0-rc2/css/bootstrap.min.css")
+    link(rel="stylesheet", href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-theme.min.css")
+
+  body
+    block content
+    
+  script(src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js")    
+  script(src='/socket.io/socket.io.js')
+  script
+    var socket = io.connect();
+    socket.on('nicknames', function (data) {
+      $('#nicknames').empty().append($('<ul>'));
+      for(var i=0; i<data.length; i++) {
+        $('#nicknames ul').append('<li>' + data[i] + '</li>');
+      }
+    });
+
+    socket.on('user message', function (data) {
+      $('#messages').append($('<p>').append($('<strong>').text(data.nick), data.message));
+    });
+
+    socket.on('announcement', function (data) {
+  
+        $('#messages').append($('<p>').append($('<em>').text(data.message)));
+      
+    });
+
+    $(function () {
+      $('#set-nickname').submit(function() {
+        socket.emit('nickname', $('#nickname').val(), function (data) {
+          if (!data) {
+            $('#set-nickname').hide();
+            $('#send-message').show();
+          }else if(data == '') {
+            $('#set-nickname')
+              .prepend($('<p>')
+              .text('Nickname ya tomado, elige otro.'));
+          }else{
+          //- if ($(this).find('#set-nickname')[0]) return;
+          if( $('#set-nickname').find('p')[0] ) return;
+            $('#set-nickname')
+            .prepend($('<p>')
+              .text('Nickname no puede ser vacio'));
+          }
+        });
+        return false;
+      });
+
+      $('#send-message').submit(function (e) {
+        e.preventDefault(); 
+
+        socket.emit('user message', $('#message').val(), function(e){
+          console.log(e);
+        });
+          
+        $('#message').val('').focus();
+        
+        return false;
+
+      });
+    });
